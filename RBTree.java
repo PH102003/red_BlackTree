@@ -1,6 +1,7 @@
 import java.util.LinkedList;
 
 import javax.management.RuntimeErrorException;
+import javax.management.relation.RoleNotFoundException;
 
 public class RBTree<T extends Comparable<T>> {
     private RBNode<T> root;
@@ -21,12 +22,98 @@ public class RBTree<T extends Comparable<T>> {
 
     private RBNode<T> insertion(RBNode<T> raiz, T value) {
         if (raiz == null) {
-            root = new RBNode<>(value, NColor.BLACK);
+            return new RBNode<>(value, NColor.BLACK);
         } else if (value.compareTo(raiz.getInfo()) < 0) {
             raiz.setLeft(insertion(raiz.getLeft(), value));
+            raiz = new RBNode<>(value, NColor.RED);
         } else {
             raiz.setRight(insertion(raiz.getRight(), value));
+            raiz = new RBNode<>(value, NColor.RED);
+            if(raiz.getLeft().getColor() == raiz.getColor().RED){
+                raiz = rotaco
+            }
         }
+        return raiz;
+    }
+    public void rotaçaoSimplesEsq() {
+        if (root != null && root.getRight() != null) {
+                root = rotacaoSimplesEsq(root);
+            }
+        
+    }
+    private RBNode<T> rotacaoSimplesEsq(RBNode<T> raiz){
+        if(raiz != null && raiz.getRight()!= null){
+
+            RBNode <T> raizAux = raiz.getRight();
+            /*
+            visto que só é possivel fazer uma rotação à esq através de uma inserção a dir,
+            estou me baseando no nó inserido a direita (raiz.getRight)
+             */
+            raiz.setRight(raizAux.getLeft());
+            raizAux.setLeft(raiz);
+            return raizAux;
+        }
+        //lógica de transformar o filho a direita como 'raiz'
+        
+        return raiz;
+        
+
+    }
+
+    public void rotaçaoDuplaEsq() {
+        if(root != null && root.getLeft() != null){
+            root = rotaçaoDuplaEsq(root);
+        }
+    }
+    private RBNode<T> rotaçaoDuplaEsq(RBNode<T> raiz){
+        if (raiz != null && raiz.getRight() != null) {
+
+        raiz.setRight(rotacaoSimplesDirt(raiz.getRight()));
+        /*utilização do método de rotação simples a direita seguido de rotação simples a esquerda,
+        visto que uma rotação dupla é composta de duas rotações simples 
+        */
+        return rotacaoSimplesEsq(raiz);
+        }
+        return raiz;
+    }
+
+    public void rotaçaoSimplesDirt(){
+        if(root != null && root.getLeft()!= null){
+            root = rotacaoSimplesDirt(root);
+        }
+        
+    }
+    private RBNode<T> rotacaoSimplesDirt(RBNode<T> raiz){
+        if(raiz != null && raiz.getLeft() != null){
+
+            RBNode<T> raizAux = raiz.getLeft();
+            /* 
+            visto que só é possivel fazer uma rotação a direita através de uma inserção a esq,
+            estou me baseando no nó inserido a esq (raiz.getLeft)
+             */
+            raiz.setLeft(raizAux.getRight());
+            
+            raizAux.setRight(raiz);
+            //lógica para transformar um filho da esquerda como 'raiz'
+            
+            return raizAux;
+        }
+        return raiz;
+    }
+
+    public void rotaçaoDuplaDirt(){
+        if(root != null && root.getLeft()!= null){
+            root = rotaçaoDuplaDirt(root);
+        }
+
+    }
+    private RBNode<T> rotaçaoDuplaDirt(RBNode<T> raiz){
+        if(raiz != null && raiz.getLeft() != null){
+
+            raiz.setLeft(rotacaoSimplesEsq(raiz.getLeft()));
+            //lógica contrária à rotaçao dupla a esquerda
+            return rotacaoSimplesDirt(raiz);
+        } 
         return raiz;
     }
 
