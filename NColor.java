@@ -1,0 +1,3 @@
+enum NColor {
+    RED,BLACK;
+}
